@@ -46,3 +46,6 @@ TRAVEL/
 └── static/
     ├── style.css
     └── graficos/
+
+Por usar um Banco de Dados MySQL direto na máquina, este sistema somente pode ser testado localmente, por escolha minha...
+Todavia, para que você possa vê-lo funcionando, acesse o link em anexo no Repositório para ter acesso a um vídeo demonstrando-o.
