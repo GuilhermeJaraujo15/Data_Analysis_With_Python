@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Agência de Viagens — Data Explorer
+    </title>
+
+    <!-- CSS servido pelo Flask -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+
+<body>
+
+    <!-- ===================================================== -->
+    <!-- CABEÇALHO -->
+    <!-- ===================================================== -->
+
+    <header class="cabecalho">
+
+        <h1>
+            Agência de Viagens — Data Explorer
+        </h1>
+
+        <p>
+            Análise de vendas utilizando Python,
+            Pandas, MySQL, Matplotlib e Seaborn.
+        </p>
+
+    </header>
+
+
+    <!-- ===================================================== -->
+    <!-- CONTEÚDO PRINCIPAL -->
+    <!-- ===================================================== -->
+
+    <main class="container">
+
+
+        <!-- ================================================= -->
+        <!-- BOTÕES DE RELATÓRIOS -->
+        <!-- ================================================= -->
+
+        <section class="painel">
+
+            <h2>
+                Relatórios
+            </h2>
+
+            <p>
+                Selecione uma das opções abaixo
+                para analisar os dados registrados no banco.
+            </p>
+
+
+            <div class="botoes">
+
+
+                <!-- RELATÓRIO GERAL -->
+
+                <form
+                    action="{{ url_for('relatorio') }}"
+                    method="get"
+                >
+
+                    <button type="submit">
+                        Relatório Geral
+                    </button>
+
+                </form>
+
+
+                <!-- VENDAS ACIMA DA MÉDIA -->
+
+                <form
+                    action="{{ url_for('acima_media') }}"
+                    method="get"
+                >
+
+                    <button type="submit">
+                        Vendas acima do Ticket Médio
+                    </button>
+
+                </form>
+
+
+                <!-- GRÁFICOS -->
+
+                <form
+                    action="{{ url_for('graficos') }}"
+                    method="get"
+                >
+
+                    <button type="submit">
+                        Gerar Gráficos
+                    </button>
+
+                </form>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================================================= -->
+        <!-- CONSULTA POR DESTINO -->
+        <!-- ================================================= -->
+
+        <section class="painel">
+
+            <h2>
+                Consultar Destino
+            </h2>
+
+            <p>
+                Informe um destino para visualizar somente
+                as vendas relacionadas a ele.
+            </p>
+
+
+            <form
+                class="consulta"
+                action="{{ url_for('destino') }}"
+                method="get"
+            >
+
+                <label for="destino">
+                    Digite o destino:
+                </label>
+
+
+<select
+    id="destino"
+    name="destino"
+    required
+>
+
+    <option value="" disabled selected>
+        Selecione um destino
+    </option>
+
+    {% for destino_item in destinos_disponiveis %}
+
+        <option value="{{ destino_item }}">
+            {{ destino_item }}
+        </option>
+
+    {% endfor %}
+
+</select>
+
+
+                <button type="submit">
+                    Consultar
+                </button>
+
+            </form>
+
+        </section>
+
+
+
+        <!-- ================================================= -->
+        <!-- MENSAGEM DE ERRO -->
+        <!-- ================================================= -->
+
+        {% if erro %}
+
+            <section class="painel resultado">
+
+                <h2>
+                    Atenção
+                </h2>
+
+                <p>
+                    {{ erro }}
+                </p>
+
+            </section>
+
+        {% endif %}
+
+
+
+        <!-- ================================================= -->
+        <!-- RELATÓRIO GERAL -->
+        <!-- ================================================= -->
+
+        {% if resultado %}
+
+            <section class="painel resultado">
+
+                <h2>
+                    Relatório Geral
+                </h2>
+
+
+                <div class="resultado-placeholder">
+
+
+                    <p>
+                        <strong>
+                            1. Quantidade de vendas:
+                        </strong>
+
+                        {{ resultado.quantidade_vendas }}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            2. Faturamento total:
+                        </strong>
+
+                        R$
+                        {{
+                            "%.2f"
+                            |format(resultado.faturamento_total)
+                        }}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            3. Ticket médio:
+                        </strong>
+
+                        R$
+                        {{
+                            "%.2f"
+                            |format(resultado.ticket_medio)
+                        }}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            4. Maior venda:
+                        </strong>
+
+                        R$
+                        {{
+                            "%.2f"
+                            |format(resultado.maior_venda)
+                        }}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            5. Menor venda:
+                        </strong>
+
+                        R$
+                        {{
+                            "%.2f"
+                            |format(resultado.menor_venda)
+                        }}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            6. Destino mais vendido:
+                        </strong>
+
+                        {{ resultado.destino_mais_vendido }}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            7. Destino com maior faturamento:
+                        </strong>
+
+                        {{
+                            resultado.destino_maior_faturamento
+                        }}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            8. Total de passageiros:
+                        </strong>
+
+                        {{ resultado.total_passageiros }}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            10. Cliente que realizou
+                            a maior compra:
+                        </strong>
+
+                        {{ resultado.cliente_maior_compra }}
+                    </p>
+
+
+                </div>
+
+            </section>
+
+
+
+        {% endif %}
+
+
+
+        <!-- ================================================= -->
+        <!-- BOTÃO ESPECÍFICO:
+             VENDAS ACIMA DO TICKET MÉDIO
+        ================================================== -->
+
+        {% if acima_media %}
+
+            <section class="painel resultado">
+
+                <h2>
+                    Vendas acima do Ticket Médio
+                </h2>
+
+
+                <p>
+
+                    <strong>
+                        Ticket médio geral:
+                    </strong>
+
+                    R$
+                    {{
+                        "%.2f"
+                        |format(acima_media.ticket_medio)
+                    }}
+
+                </p>
+
+
+                <div class="tabela-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Cliente
+                                </th>
+
+                                <th>
+                                    Destino
+                                </th>
+
+                                <th>
+                                    País
+                                </th>
+
+                                <th>
+                                    Valor
+                                </th>
+
+                                <th>
+                                    Passageiros
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for venda in acima_media.vendas %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ venda["Cliente"] }}
+                                    </td>
+
+                                    <td>
+                                        {{ venda["Destino"] }}
+                                    </td>
+
+                                    <td>
+                                        {{ venda["País"] }}
+                                    </td>
+
+                                    <td>
+
+                                        R$
+                                        {{
+                                            "%.2f"
+                                            |format(venda["Valor"])
+                                        }}
+
+                                    </td>
+
+                                    <td>
+                                        {{ venda["Passageiros"] }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        {% endif %}
+
+
+
+        <!-- ================================================= -->
+        <!-- RESULTADO DA CONSULTA POR DESTINO -->
+        <!-- ================================================= -->
+
+        {% if destino %}
+
+            <section class="painel resultado">
+
+                <h2>
+                    Resultado — {{ destino.destino }}
+                </h2>
+
+
+                <div class="resultado-placeholder">
+
+
+                    <p>
+
+                        <strong>
+                            Quantidade de vendas:
+                        </strong>
+
+                        {{ destino.quantidade }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Faturamento:
+                        </strong>
+
+                        R$
+                        {{
+                            "%.2f"
+                            |format(destino.faturamento)
+                        }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Ticket médio:
+                        </strong>
+
+                        R$
+                        {{
+                            "%.2f"
+                            |format(destino.ticket_medio)
+                        }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Passageiros:
+                        </strong>
+
+                        {{ destino.passageiros }}
+
+                    </p>
+
+
+                </div>
+
+
+
+                <!-- TABELA DE VENDAS DO DESTINO -->
+
+                <h3>
+                    Vendas encontradas
+                </h3>
+
+
+                <div class="tabela-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Cliente
+                                </th>
+
+                                <th>
+                                    Destino
+                                </th>
+
+                                <th>
+                                    País
+                                </th>
+
+                                <th>
+                                    Valor
+                                </th>
+
+                                <th>
+                                    Passageiros
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for indice, venda in
+                                destino.vendas.iterrows()
+                            %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ venda["Cliente"] }}
+                                    </td>
+
+                                    <td>
+                                        {{ venda["Destino"] }}
+                                    </td>
+
+                                    <td>
+                                        {{ venda["País"] }}
+                                    </td>
+
+                                    <td>
+
+                                        R$
+                                        {{
+                                            "%.2f"
+                                            |format(venda["Valor"])
+                                        }}
+
+                                    </td>
+
+                                    <td>
+                                        {{ venda["Passageiros"] }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+        {% elif request.args.get("destino") %}
+
+            <section class="painel resultado">
+
+                <h2>
+                    Destino não encontrado
+                </h2>
+
+                <p>
+                    Nenhuma venda foi encontrada para
+                    <strong>
+                        {{ request.args.get("destino") }}
+                    </strong>.
+                </p>
+
+            </section>
+
+        {% endif %}
+
+
+
+        <!-- ================================================= -->
+        <!-- GRÁFICOS -->
+        <!-- ================================================= -->
+
+        {% if graficos %}
+
+            <section class="painel resultado">
+
+                <h2>
+                    Análise Gráfica
+                </h2>
+
+                <p>
+                    Os gráficos abaixo foram gerados
+                    dinamicamente pelo Python.
+                </p>
+
+
+                <div class="graficos">
+
+
+                    <!-- GRÁFICO 1 -->
+
+                    <div class="grafico">
+
+                        <h3>
+                            Faturamento por Destino
+                        </h3>
+
+                        <p>
+                            Gráfico gerado utilizando Seaborn.
+                        </p>
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='graficos/faturamento_destino.png'
+                            ) }}"
+                            alt="Gráfico de faturamento por destino"
+                        >
+
+                    </div>
+
+
+
+                    <!-- GRÁFICO 2 -->
+
+                    <div class="grafico">
+
+                        <h3>
+                            Quantidade de Vendas por Destino
+                        </h3>
+
+                        <p>
+                            Gráfico gerado utilizando Matplotlib.
+                        </p>
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='graficos/vendas_destino.png'
+                            ) }}"
+                            alt="Gráfico de quantidade de vendas por destino"
+                        >
+
+                    </div>
+
+
+
+                    <!-- GRÁFICO 3 -->
+
+                    <div class="grafico">
+
+                        <h3>
+                            Participação do Faturamento
+                        </h3>
+
+                        <p>
+                            Participação percentual de cada destino
+                            no faturamento total.
+                        </p>
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='graficos/participacao_faturamento.png'
+                            ) }}"
+                            alt="Gráfico de participação do faturamento"
+                        >
+
+                    </div>
+
+
+                </div>
+
+            </section>
+
+        {% endif %}
+
+
+
+        <!-- ================================================= -->
+        <!-- ESTADO INICIAL -->
+        <!-- ================================================= -->
+
+        {% if
+            not resultado
+            and not acima_media
+            and not destino
+            and not graficos
+            and not erro
+            and not request.args.get("destino")
+        %}
+
+            <section class="painel resultado">
+
+                <h2>
+                    Saída do Python
+                </h2>
+
+                <p>
+                    Selecione um relatório ou pesquise por um
+                    destino para iniciar a análise.
+                </p>
+
+
+                <div class="resultado-placeholder">
+
+                    <p>
+                        <strong>
+                            Banco de dados:
+                        </strong>
+
+                        MySQL
+                    </p>
+
+                    <p>
+                        <strong>
+                            Processamento:
+                        </strong>
+
+                        Python + Pandas
+                    </p>
+
+                    <p>
+                        <strong>
+                            Visualização:
+                        </strong>
+
+                        Matplotlib + Seaborn
+                    </p>
+
+                </div>
+
+            </section>
+
+        {% endif %}
+
+
+    </main>
+
+
+
+    <!-- ===================================================== -->
+    <!-- RODAPÉ -->
+    <!-- ===================================================== -->
+
+    <footer>
+
+        <p>
+            Projeto educacional —
+            Python + Flask + Pandas + MySQL
+        </p>
+
+    </footer>
+
+
+</body>
+
+</html>

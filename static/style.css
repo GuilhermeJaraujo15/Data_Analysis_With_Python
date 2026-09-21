@@ -1,0 +1,664 @@
+/* ==========================================================
+   TRAVEL DATA EXPLORER
+   UI inspirada em MySQL Workbench / pgAdmin / IDEs clássicas
+   ========================================================== */
+
+
+/* ==========================================================
+   1. TOKENS DO SISTEMA
+   ========================================================== */
+
+:root {
+    --bg-app: #e9edf1;
+    --bg-panel: #ffffff;
+    --bg-panel-soft: #f4f6f8;
+    --bg-toolbar: #2f3b46;
+    --bg-toolbar-secondary: #3b4854;
+
+    --blue-primary: #2f6f9f;
+    --blue-primary-hover: #255c84;
+    --blue-soft: #e7f0f7;
+
+    --text-primary: #1d252c;
+    --text-secondary: #56616b;
+    --text-muted: #77818a;
+    --text-inverse: #ffffff;
+
+    --border: #c8d0d7;
+    --border-dark: #aeb7bf;
+    --border-light: #dce1e5;
+
+    --row-hover: #edf4f9;
+    --row-alt: #f7f8f9;
+
+    --success: #2c7a4b;
+    --danger: #a33a3a;
+
+    --font-ui:
+        "Segoe UI",
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    --font-data:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    --container-width: 1380px;
+}
+
+
+/* ==========================================================
+   2. RESET
+   ========================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+
+    min-width: 320px;
+    min-height: 100vh;
+
+    font-family: var(--font-ui);
+    font-size: 14px;
+    line-height: 1.4;
+
+    color: var(--text-primary);
+    background: var(--bg-app);
+}
+
+button,
+input {
+    font: inherit;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+
+/* ==========================================================
+   3. CABEÇALHO
+   ========================================================== */
+
+.cabecalho {
+    width: 100%;
+
+    padding: 12px 18px;
+
+    color: var(--text-inverse);
+
+    background: var(--bg-toolbar);
+
+    border-bottom: 3px solid var(--blue-primary);
+}
+
+.cabecalho h1 {
+    margin: 0;
+
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+}
+
+.cabecalho p {
+    margin: 3px 0 0;
+
+    font-size: 12px;
+
+    color: #cdd5dc;
+}
+
+
+/* ==========================================================
+   4. CONTAINER PRINCIPAL
+   ========================================================== */
+
+.container {
+    width: min(100%, var(--container-width));
+
+    margin: 0 auto;
+    padding: 12px;
+}
+
+
+/* ==========================================================
+   5. PAINÉIS
+   ========================================================== */
+
+.painel {
+    width: 100%;
+    min-width: 0;
+
+    margin-bottom: 10px;
+    padding: 12px;
+
+    background: var(--bg-panel);
+
+    border: 1px solid var(--border);
+    border-radius: 2px;
+}
+
+.painel h2 {
+    margin: -12px -12px 12px;
+    padding: 7px 10px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    color: #26323c;
+
+    background: var(--bg-panel-soft);
+
+    border-bottom: 1px solid var(--border);
+}
+
+.painel h3 {
+    margin: 14px 0 6px;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.painel p {
+    margin: 5px 0;
+}
+
+
+/* ==========================================================
+   6. ÁREA DE CONTROLES
+   ========================================================== */
+
+.botoes {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-top: 10px;
+}
+
+.botoes form {
+    margin: 0;
+}
+
+
+/* ==========================================================
+   7. BOTÕES
+   ========================================================== */
+
+button {
+    min-height: 32px;
+
+    padding: 5px 12px;
+
+    color: var(--text-inverse);
+
+    background: var(--blue-primary);
+
+    border: 1px solid #245a81;
+    border-radius: 2px;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.12s ease,
+        border-color 0.12s ease;
+}
+
+button:hover {
+    background: var(--blue-primary-hover);
+    border-color: #1d4c70;
+}
+
+button:focus-visible {
+    outline: 2px solid #70a8d1;
+    outline-offset: 2px;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+
+/* ==========================================================
+   8. FORMULÁRIO DE CONSULTA
+   ========================================================== */
+
+.consulta {
+    display: grid;
+
+    grid-template-columns:
+        minmax(130px, auto)
+        minmax(180px, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin-top: 10px;
+}
+
+.consulta label {
+    font-size: 13px;
+    font-weight: 600;
+
+    color: var(--text-secondary);
+}
+
+.consulta input {
+    width: 100%;
+    min-width: 0;
+    height: 32px;
+
+    padding: 5px 8px;
+
+    color: var(--text-primary);
+    background: #ffffff;
+
+    border: 1px solid var(--border-dark);
+    border-radius: 2px;
+
+    outline: none;
+}
+
+.consulta input:hover {
+    border-color: #89949d;
+}
+
+.consulta input:focus {
+    border-color: var(--blue-primary);
+
+    box-shadow: 0 0 0 1px var(--blue-primary);
+}
+
+
+/* ==========================================================
+   9. RESULTADOS
+   ========================================================== */
+
+.resultado {
+    overflow: hidden;
+}
+
+.resultado-placeholder {
+    padding: 8px 10px;
+
+    background: var(--blue-soft);
+
+    border: 1px solid #c3d7e6;
+    border-left: 3px solid var(--blue-primary);
+}
+
+.resultado-placeholder p {
+    margin: 4px 0;
+}
+
+
+/* ==========================================================
+   10. DADOS TÉCNICOS / MÉTRICAS
+   ========================================================== */
+
+.resultado-placeholder strong,
+table td:nth-child(4),
+table td:nth-child(5) {
+    font-family: var(--font-data);
+}
+
+
+/* ==========================================================
+   11. TABELAS
+   ========================================================== */
+
+.tabela-container {
+    width: 100%;
+    max-width: 100%;
+
+    overflow-x: auto;
+
+    margin-top: 8px;
+
+    border: 1px solid var(--border);
+}
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    background: #ffffff;
+
+    font-size: 13px;
+}
+
+thead {
+    background: #e5e9ec;
+}
+
+th,
+td {
+    padding: 5px 7px;
+
+    text-align: left;
+    vertical-align: middle;
+
+    white-space: nowrap;
+
+    border-right: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+}
+
+th {
+    font-size: 12px;
+    font-weight: 600;
+
+    color: #2c3740;
+
+    background: #e6eaed;
+}
+
+tbody tr:nth-child(even) {
+    background: var(--row-alt);
+}
+
+tbody tr:hover {
+    background: var(--row-hover);
+}
+
+th:last-child,
+td:last-child {
+    border-right: none;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* ==========================================================
+   12. ÁREA DE GRÁFICOS
+   ========================================================== */
+
+.graficos {
+    display: grid;
+
+    grid-template-columns: minmax(0, 1fr);
+
+    gap: 10px;
+
+    width: 100%;
+    max-width: 100%;
+}
+
+
+/* ==========================================================
+   13. PAINEL INDIVIDUAL DO GRÁFICO
+   ========================================================== */
+
+.grafico {
+    width: 100%;
+    min-width: 0;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid var(--border);
+}
+
+.grafico h3 {
+    margin: 0;
+
+    padding: 6px 9px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #26323c;
+
+    background: #edf0f2;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.grafico p {
+    margin: 0;
+
+    padding: 5px 9px;
+
+    font-size: 12px;
+
+    color: var(--text-secondary);
+
+    background: #f8f9fa;
+
+    border-bottom: 1px solid var(--border-light);
+}
+
+
+/* ==========================================================
+   14. RESPONSIVIDADE DOS GRÁFICOS
+   ========================================================== */
+
+.grafico img {
+    display: block;
+
+    width: 100%;
+    max-width: 100%;
+
+    height: auto;
+
+    max-height: min(68vh, 720px);
+
+    margin: 0 auto;
+
+    padding: 8px;
+
+    object-fit: contain;
+
+    background: #ffffff;
+}
+
+
+/* impede imagens do matplotlib de estourarem o layout */
+
+.grafico,
+.grafico img,
+.graficos {
+    min-width: 0;
+}
+
+
+/* ==========================================================
+   15. RODAPÉ
+   ========================================================== */
+
+footer {
+    width: 100%;
+
+    padding: 9px 15px;
+
+    text-align: center;
+
+    font-size: 11px;
+
+    color: #d2d8dd;
+
+    background: var(--bg-toolbar);
+
+    border-top: 1px solid #202a32;
+}
+
+
+/* ==========================================================
+   16. DESKTOP GRANDE
+   ========================================================== */
+
+@media (min-width: 1400px) {
+
+    .container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .grafico img {
+        max-height: 72vh;
+    }
+
+}
+
+
+/* ==========================================================
+   17. TABLET
+   ========================================================== */
+
+@media (max-width: 900px) {
+
+    .container {
+        padding: 8px;
+    }
+
+    .consulta {
+        grid-template-columns: 1fr;
+    }
+
+    .consulta button {
+        width: max-content;
+    }
+
+    .grafico img {
+        max-height: 60vh;
+    }
+
+}
+
+
+/* ==========================================================
+   18. MOBILE
+   ========================================================== */
+
+@media (max-width: 600px) {
+
+    body {
+        font-size: 13px;
+    }
+
+    .cabecalho {
+        padding: 10px 12px;
+    }
+
+    .cabecalho h1 {
+        font-size: 17px;
+    }
+
+    .cabecalho p {
+        font-size: 11px;
+    }
+
+    .container {
+        padding: 5px;
+    }
+
+    .painel {
+        padding: 9px;
+
+        margin-bottom: 6px;
+    }
+
+    .painel h2 {
+        margin:
+            -9px
+            -9px
+            9px;
+
+        padding: 6px 8px;
+
+        font-size: 14px;
+    }
+
+    .botoes {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .botoes form,
+    .botoes button {
+        width: 100%;
+    }
+
+    .consulta {
+        grid-template-columns: 1fr;
+    }
+
+    .consulta button {
+        width: 100%;
+    }
+
+    .resultado-placeholder {
+        padding: 7px;
+    }
+
+    th,
+    td {
+        padding: 4px 6px;
+
+        font-size: 12px;
+    }
+
+    .grafico img {
+        padding: 4px;
+
+        max-height: 55vh;
+    }
+
+}
+
+
+/* ==========================================================
+   19. TELAS MUITO PEQUENAS
+   ========================================================== */
+
+@media (max-width: 400px) {
+
+    .cabecalho h1 {
+        font-size: 15px;
+    }
+
+    button {
+        font-size: 12px;
+    }
+
+    .grafico h3 {
+        font-size: 12px;
+    }
+
+}
+
+
+/* ==========================================================
+   20. ACESSIBILIDADE
+   ========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    * {
+        scroll-behavior: auto !important;
+        transition: none !important;
+    }
+
+}
